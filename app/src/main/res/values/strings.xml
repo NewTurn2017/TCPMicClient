@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">GVS-AI-1000M</string>
+
+    <string-array name="mic_no">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string-array name="calib_file">
+        <item>isemic_725tr_calib_90degree_1411902.csv</item>
+        <item>isemic_725tr_calib_90degree_3511901.csv</item>
+        <item>isemic_725tr_calib_90degree_3511902.csv</item>
+        <item>isemic_725tr_calib_90degree_3511903.csv</item>
+        <item>isemic_725tr_calib_90degree_6261901.csv</item>
+        <item>isemic_725tr_calib_freefield_1411902.csv</item>
+        <item>isemic_725tr_calib_freefield_3511901.csv</item>
+        <item>isemic_725tr_calib_freefield_3511902.csv</item>
+        <item>isemic_725tr_calib_freefield_3511903.csv</item>
+        <item>isemic_725tr_calib_freefield_6261901.csv</item>
+
+    </string-array>
+
+</resources>
