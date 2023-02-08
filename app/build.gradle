@@ -27,11 +27,11 @@ android {
             pyc {
                 src false
             }
-            pip {
-                install "acoustics"
-                install "numpy"
-                install "pandas"
-            }
+//            pip {
+//                install "acoustics"
+//                install "numpy"
+//                install "pandas"
+//            }
         }
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
