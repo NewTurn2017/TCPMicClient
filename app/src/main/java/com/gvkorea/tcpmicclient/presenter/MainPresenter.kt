@@ -4,12 +4,16 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.media.MediaPlayer
+import android.os.BatteryManager
+import android.os.Build
 import android.os.Handler
 import android.os.Message
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.chaquo.python.PyObject
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
@@ -19,10 +23,13 @@ import com.gvkorea.tcpmicclient.MainActivity.Companion.isCalib
 import com.gvkorea.tcpmicclient.MainActivity.Companion.isStarted
 import com.gvkorea.tcpmicclient.MainActivity.Companion.selectedMicName
 import com.gvkorea.tcpmicclient.MainActivity.Companion.toastMsg
+import com.gvkorea.tcpmicclient.MainActivity.Companion.velocity
 import com.gvkorea.tcpmicclient.R
 import com.gvkorea.tcpmicclient.audio.GVAudioRecord
+import com.gvkorea.tcpmicclient.audio.RecordAudioTune.Companion.rmsValues
 import com.gvkorea.tcpmicclient.audio.RecordAudioTune.Companion.spldB
 import com.gvkorea.tcpmicclient.utils.*
+import java.io.IOException
 import java.lang.Math.round
 import java.net.Socket
 import kotlin.math.roundToInt
@@ -55,6 +62,7 @@ class MainPresenter(val view: MainActivity, val handler: Handler) {
         handler.sendMessage(m)
     }
 
+
     private fun disConnectStatus() {
 
         view.binding.tvConnectStatus.text = "접속안됨."
@@ -74,6 +82,7 @@ class MainPresenter(val view: MainActivity, val handler: Handler) {
         val audioData = strToFloatArray(audioArrays)
 
         packet.sendPacketAudio(socket, micNo, spldBArray, audioData)
+        Log.d("real1", rmsValues.toList().toString())
 
     }
 
@@ -104,7 +113,6 @@ class MainPresenter(val view: MainActivity, val handler: Handler) {
         } else {
             view.recordTaskStop()
         }
-
     }
 
     fun calibMode() {
@@ -120,20 +128,23 @@ class MainPresenter(val view: MainActivity, val handler: Handler) {
     }
 
     private fun showCalibMenu() {
-        view.binding.layCalib.visibility = View.VISIBLE
-        view.binding.btnAutoCalib.visibility = View.VISIBLE
-        view.binding.btnShowCalibSelection.visibility = View.VISIBLE
-        view.binding.btnResetCalib.visibility = View.VISIBLE
-        view.binding.barChartCalib.visibility = View.VISIBLE
+        with(view.binding){
+            layCalib.visibility = View.VISIBLE
+            btnAutoCalib.visibility = View.VISIBLE
+            btnShowCalibSelection.visibility = View.VISIBLE
+            btnResetCalib.visibility = View.VISIBLE
+            barChartCalib.visibility = View.VISIBLE
+        }
     }
 
     private fun hideCalibMenu() {
-        view.binding.layCalib.visibility = View.GONE
-        view.binding.btnAutoCalib.visibility = View.GONE
-        view.binding.btnResetCalib.visibility = View.GONE
-        view.binding.barChartCalib.visibility = View.GONE
-        view.binding.btnShowCalibSelection.visibility = View.GONE
-
+        with(view.binding){
+            layCalib.visibility = View.GONE
+            btnAutoCalib.visibility = View.GONE
+            btnResetCalib.visibility = View.GONE
+            barChartCalib.visibility = View.GONE
+            btnShowCalibSelection.visibility = View.GONE
+        }
     }
 
     fun autoCalib() {
@@ -218,6 +229,7 @@ class MainPresenter(val view: MainActivity, val handler: Handler) {
             dialog.dismiss()
             Toast.makeText(view, "${calibFileList[which]} 선택됨.", Toast.LENGTH_SHORT).show()
             setCalibFile(calibFileList[which])
+            view.prefSetting.saveCalibMic(calibFileList[which])
         }
         val alertDialog = builder.create()
         alertDialog.show()
@@ -225,9 +237,17 @@ class MainPresenter(val view: MainActivity, val handler: Handler) {
 
     private fun setCalibFile(fileName: String) {
         if (view.recordAudioTune != null) {
-            view.recordAudioTune.calibData = CSVRead(view).readCalibCsv(view.assets!!, fileName)
-            selectedMicName = fileName
-            setMicName()
+            if(fileName != "none.csv"){
+
+                view.recordAudioTune.calibData = CSVRead(view).readCalibCsv(view.assets!!, fileName)
+                selectedMicName = fileName
+                setMicName()
+            } else{
+                view.recordAudioTune.calibData = CSVRead(view).readCalibCsv(view.assets!!, "none.csv")
+                selectedMicName = fileName
+                setMicName()
+            }
+
         } else {
             Toast.makeText(view, "전원 버튼을 누른 후 실행하세요.", Toast.LENGTH_SHORT).show()
         }
@@ -239,12 +259,36 @@ class MainPresenter(val view: MainActivity, val handler: Handler) {
         view.binding.tvCalibMicNo.text = fileName
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     fun reverbMeasureStart() {
-        startRecord()
+//        startRecord()
+        startRecordNew()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun startRecordNew() {
+        view.setupNoiseRecorder()
+
+        handler.postDelayed({
+            view.recorder.startRecording()
+        }, 200)
+        handler.postDelayed({
+            stopRecordNew()
+        }, 4000)
+    }
+
+    private fun stopRecordNew() {
+        try {
+            view.recorder.stopRecording()
+        } catch (e: IOException) {
+
+        }
+        handler.postDelayed({
+            calculateRT60()
+        }, 500)
     }
 
     private fun startRecord() {
-        toastMsg.msg("측정을 시작합니다.")
         audioRecord.startRecord()
         handler.postDelayed({
             stopRecord()
@@ -257,7 +301,6 @@ class MainPresenter(val view: MainActivity, val handler: Handler) {
     }
 
     fun calculateRT60() {
-        toastMsg.msg("잔향 측정을 준비하고 있습니다. 잠시만 기다려 주세요.")
         reverbCount++
         if (!Python.isStarted()) {
             Python.start(AndroidPlatform(view.applicationContext))
@@ -268,9 +311,8 @@ class MainPresenter(val view: MainActivity, val handler: Handler) {
             view.getExternalFilesDir(null)?.absolutePath + "/" + view.resources.getString(R.string.app_name) + "/rt.wav"
         val obj = pyf.callAttr("rt60", wavPath)
         val arr = pyObjectToArray(obj)
-        var testResult = ""
-        toastMsg.msg("${arr.toList()}")
-
+        toastMsg.msg(arr.toList().toString())
+        packet.sendPacketReverb(socket, arr)
 
     }
 
@@ -281,6 +323,51 @@ class MainPresenter(val view: MainActivity, val handler: Handler) {
             arr[i] = obj.asList()[i].toFloat()
         }
         return arr
+    }
+
+    fun setVeleticy(no: Int) {
+         velocity = no
+        view.recordTaskStop()
+        handler.postDelayed({
+            view.recordTaskStart()
+        },200)
+
+
+    }
+
+    fun changeVelocity() {
+        var no = 1
+        when(velocity){
+            1 -> {
+                no = 5
+                view.binding.btnVelocity.text = "보통"
+            }
+            5 -> {
+                no = 10
+                view.binding.btnVelocity.text = "느림"
+            }
+            10 -> {
+                no = 1
+                view.binding.btnVelocity.text = "빠름"
+            }
+
+        }
+        setVeleticy(no)
+    }
+
+    fun updateTextView(msg: Message) {
+
+        view.binding.tvCounter.text = "Count: ${msg.obj as String}"
+    }
+
+    fun measureDelay() {
+        if(!view.isMeasureDeay){
+            view.isMeasureDeay = true
+            view.binding.btnDelay.text = "Off"
+        }else {
+            view.isMeasureDeay = false
+            view.binding.btnDelay.text = "On"
+        }
     }
 
 

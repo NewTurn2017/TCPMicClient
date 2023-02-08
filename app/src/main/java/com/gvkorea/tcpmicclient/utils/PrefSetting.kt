@@ -19,4 +19,23 @@ class PrefSetting(val pref: SharedPreferences) {
         editor.putBoolean("isCalib", isCalib)
         editor.apply()
     }
+
+    fun loadCalibMic(): String {
+        return pref.getString("selectedMic", "isemic_725tr_calib_freefield_1411902.csv")!!
+    }
+
+    fun saveCalibMic(selectedMic: String) {
+        editor.putString("selectedMic", selectedMic)
+        editor.apply()
+    }
+
+    fun saveDeviceId(selectedId: Int) {
+        editor.putInt("selectedId", selectedId)
+        editor.apply()
+    }
+
+    fun loadDeviceId(): Int {
+        return pref.getInt("selectedId", 1)
+    }
+
 }

@@ -26,7 +26,7 @@ class CSVRead(val context: Context?) {
                     data.add(s!!)
                 }
             }
-        } catch (e: FileNotFoundException) {
+         } catch (e: FileNotFoundException) {
             e.printStackTrace()
         } catch (e: IOException) {
             e.printStackTrace()

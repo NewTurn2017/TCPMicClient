@@ -24,7 +24,7 @@ class GVPath(val view: MainActivity) {
             file.mkdirs()
         }
 
-        scanFile(file)
+         scanFile(file)
 
 //        val intent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
 //        intent.data = Uri.fromFile(file)

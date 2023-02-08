@@ -8,7 +8,7 @@ import java.nio.ByteBuffer
 
 class GVPacket {
 
-    private val CHECKINTERVAL = 20L
+    private val CHECKINTERVAL = 10L
     private lateinit var tx_buff: ByteArray
     private lateinit var outputStream: OutputStream
     private var dataOutputStream: DataOutputStream? = null
@@ -79,6 +79,58 @@ class GVPacket {
         return ret
     }
 
+    fun sendPacketReverb(socket: Socket?, reverb: FloatArray) {
+        if (socket != null) {
+            try {
+                tx_buff = packetReverbResult(reverb)
+                outputStream = socket.getOutputStream()
+                dataOutputStream = DataOutputStream(outputStream)
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            Thread {
+
+                try {
+                    dataOutputStream?.write(tx_buff, 0, tx_buff.size)
+                    dataOutputStream?.flush()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }.start()
+
+            try {
+                Thread.sleep(CHECKINTERVAL)
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            }
+
+            Thread.currentThread()
+            Thread.interrupted()
+        } else {
+        }
+    }
+
+    fun packetReverbResult(data: FloatArray): ByteArray {
+        val commandID = 'S'
+        val para1 = 'J'
+        val reverbResultArray = floatToByte(data)
+
+        val tx_buff = ByteArray(28)
+
+        tx_buff[0] = (tx_buff.size - 1).toByte()
+        tx_buff[1] = commandID.code.toByte()
+        tx_buff[2] = para1.code.toByte()
+
+        for (i in 3..26) {
+            tx_buff[i] = reverbResultArray[i-3]
+        }
+        tx_buff[27] = (tx_buff.sum() - tx_buff[0]).toByte()
+
+        return tx_buff
+    }
+
 
     fun sendPacketTest(socket: Socket?, channel: Int) {
         if (socket != null) {
@@ -115,7 +167,7 @@ class GVPacket {
 
     private fun packetTest(channel: Int): ByteArray {
 
-        val commandID = 'S'
+        val commandID = 'T'
         val para1 = channel
 
         val mCmd = IntArray(4)
@@ -133,4 +185,5 @@ class GVPacket {
 
         return tx_buff
     }
+
 }

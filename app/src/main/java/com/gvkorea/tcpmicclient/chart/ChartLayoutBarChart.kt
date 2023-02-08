@@ -11,26 +11,31 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 
 class ChartLayoutBarChart(var mBarChart: BarChart) {
 
-    fun initBarChartLayout(yAxisMax: Float, yAxisMin: Float){
-        mBarChart.setDrawBarShadow(false)
-        mBarChart.setDrawValueAboveBar(true)
-        mBarChart.setTouchEnabled(true)
-        mBarChart.dragDecelerationFrictionCoef = 0.9f
-        mBarChart.setDrawGridBackground(false)
-        mBarChart.isHighlightPerDragEnabled = true
-        mBarChart.description.isEnabled = false
-        mBarChart.setPinchZoom(false)
-        mBarChart.setDrawBorders(false)
-        mBarChart.setBackgroundColor(Color.WHITE)
-        mBarChart.isDragEnabled = false
-        mBarChart.setScaleEnabled(false)
+    fun initBarChartLayout(yAxisMax: Float, yAxisMin: Float) {
+        with(mBarChart) {
+            setDrawBarShadow(false)
+            setDrawValueAboveBar(true)
+            setTouchEnabled(true)
+            dragDecelerationFrictionCoef = 0.9f
+            setDrawGridBackground(false)
+            isHighlightPerDragEnabled = true
+            description.isEnabled = false
+            setPinchZoom(false)
+            setDrawBorders(false)
+            setBackgroundColor(Color.WHITE)
+            isDragEnabled = false
+            setScaleEnabled(false)
+        }
 
         // x-axis limit line
 
         val xAxis = mBarChart.xAxis
-        xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.setDrawGridLines(false)
-        xAxis.setDrawLabels(false)
+        with(xAxis) {
+            position = XAxis.XAxisPosition.BOTTOM
+            setDrawGridLines(false)
+            setDrawLabels(false)
+        }
+
 
         val leftAxis = mBarChart.axisLeft
         leftAxis.removeAllLimitLines() // reset all limit lines to avoid overlapping lines
@@ -46,57 +51,64 @@ class ChartLayoutBarChart(var mBarChart: BarChart) {
     lateinit var xAxisCompLine: XAxis
     private val fillColor = Color.argb(150, 51, 181, 229)
 
-    fun initBarChartLayout_31(yAxisMax: Float, yAxisMin: Float){
-        mBarChart.setDrawBarShadow(false)
-        mBarChart.setDrawValueAboveBar(true)
-        mBarChart.setTouchEnabled(true)
-        mBarChart.dragDecelerationFrictionCoef = 0.9f
-        mBarChart.setDrawGridBackground(true)
-        mBarChart.isHighlightPerDragEnabled = true
-        mBarChart.description.isEnabled = false
-        mBarChart.setPinchZoom(false)
-        mBarChart.setDrawBorders(false)
-        mBarChart.setBackgroundColor(Color.WHITE)
-        mBarChart.isDragEnabled = false
-        mBarChart.setScaleEnabled(false)
-        mBarChart.setGridBackgroundColor(fillColor)
+    fun initBarChartLayout_31(yAxisMax: Float, yAxisMin: Float) {
 
-        val freqArray = arrayOf("","", "", "","50", "", "", "100", "", "", "200", "", "", "", "500",
-            "", "", "1k", "", "", "2k", "", "", "4k", "", "", "8k", "", "", "16k", "")
 
+        with(mBarChart) {
+            setDrawBarShadow(false)
+            setDrawValueAboveBar(true)
+            setTouchEnabled(true)
+            dragDecelerationFrictionCoef = 0.9f
+            setDrawGridBackground(true)
+            isHighlightPerDragEnabled = true
+            description.isEnabled = false
+            setPinchZoom(false)
+            setDrawBorders(false)
+            setBackgroundColor(Color.WHITE)
+            isDragEnabled = false
+            setScaleEnabled(false)
+            setGridBackgroundColor(fillColor)
+            axisRight.isEnabled = false
+            legend.form = Legend.LegendForm.LINE
+        }
+
+        val freqArray = arrayOf(
+            "", "", "", "", "50", "", "", "100", "", "", "200", "", "", "", "500",
+            "", "", "1k", "", "", "2k", "", "", "4k", "", "", "8k", "", "", "16k", ""
+        )
         xAxisCompLine = mBarChart.xAxis
-        xAxisCompLine.position = XAxis.XAxisPosition.BOTTOM
-        xAxisCompLine.setDrawGridLines(false)
-        xAxisCompLine.textSize = 8.0f
-        xAxisCompLine.labelCount = 31
-        xAxisCompLine.valueFormatter = IndexAxisValueFormatter(freqArray)
-
+        with(xAxisCompLine) {
+            position = XAxis.XAxisPosition.BOTTOM
+            setDrawGridLines(false)
+            textSize = 8.0f
+            labelCount = 31
+            valueFormatter = IndexAxisValueFormatter(freqArray)
+        }
 
         val leftAxis = mBarChart.axisLeft
-        leftAxis.removeAllLimitLines() // reset all limit lines to avoid overlapping lines
-        leftAxis.axisMaximum = yAxisMax
-        leftAxis.axisMinimum = yAxisMin
-        leftAxis.setDrawZeroLine(true)
-
-        mBarChart.axisRight.isEnabled = false
-        val l = mBarChart.legend
-        l.form = Legend.LegendForm.LINE
+        with(leftAxis) {
+            removeAllLimitLines() // reset all limit lines to avoid overlapping lines
+            axisMaximum = yAxisMax
+            axisMinimum = yAxisMin
+            setDrawZeroLine(true)
+        }
     }
 
 
-
-    fun initChart(){
+    fun initChart() {
         val barValues = ArrayList<BarEntry>()
-        for ( i in 0 until 31){
+        for (i in 0 until 31) {
             barValues.add(BarEntry(i.toFloat(), 0.toFloat()))
         }
 
         val barDataset = BarDataSet(barValues, "실시간 스펙트럼")
-        barDataset.setDrawIcons(false)
-        barDataset.setGradientColor(Color.GREEN, Color.RED)
-        barDataset.setDrawValues(false)
-        mBarChart.description.isEnabled = false
-        barDataset.formLineWidth = 1f
+        with(barDataset) {
+            setDrawIcons(false)
+            setGradientColor(Color.GREEN, Color.RED)
+            setDrawValues(false)
+            formLineWidth = 1f
+        }
+
         val data = BarData(barDataset)
         // set data
         mBarChart.data = data

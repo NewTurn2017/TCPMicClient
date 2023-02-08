@@ -12,6 +12,7 @@ import java.nio.ByteOrder
 
 class GVAudioRecord(val mPath: GVPath, val presenter: MainPresenter) {
 
+    @SuppressLint("InlinedApi")
     private val mAudioSource = MediaRecorder.AudioSource.VOICE_RECOGNITION
     private val mSampleRate = 44100
     private val mChannalCount: Int = android.media.AudioFormat.CHANNEL_IN_STEREO
@@ -21,6 +22,7 @@ class GVAudioRecord(val mPath: GVPath, val presenter: MainPresenter) {
 
     private var mAudioRecord: AudioRecord? = null
     private var isRecording = false
+
 
     @SuppressLint("MissingPermission")
     fun startRecord() {

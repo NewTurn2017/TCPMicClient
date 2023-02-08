@@ -13,38 +13,41 @@ class ChartLayoutLineChart(var lineChart: LineChart) {
     lateinit var xAxis: XAxis
 
     fun initLineChartLayout(yAxisMax: Float, yAxisMin: Float) {
-        lineChart.dragDecelerationFrictionCoef = 0.9f
-        lineChart.setDrawGridBackground(false)
-        lineChart.description.isEnabled = false
-        lineChart.setPinchZoom(false)
-        lineChart.setDrawBorders(false)
-        lineChart.setBackgroundColor(Color.WHITE)
-        lineChart.isDragEnabled = false
-
-        lineChart.setScaleEnabled(false)
+        with(lineChart) {
+            dragDecelerationFrictionCoef = 0.9f
+            setDrawGridBackground(false)
+            description.isEnabled = false
+            setPinchZoom(false)
+            setDrawBorders(false)
+            setBackgroundColor(Color.WHITE)
+            isDragEnabled = false
+            setScaleEnabled(false)
+        }
         xAxis = lineChart.xAxis
         val freqArray = arrayOf(
             "", "", "", "", "50", "", "", "100", "", "", "200", "", "", "", "500",
             "", "", "1k", "", "", "2k", "", "", "4k", "", "", "8k", "", "", "16k", ""
         )
 
-
-        xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.setDrawGridLines(false)
-        xAxis.textSize = 8.0f
-        xAxis.labelCount = 31
-        xAxis.valueFormatter = IndexAxisValueFormatter(freqArray)
+        with(xAxis){
+            position = XAxis.XAxisPosition.BOTTOM
+            setDrawGridLines(false)
+            textSize = 8.0f
+            labelCount = 31
+            valueFormatter = IndexAxisValueFormatter(freqArray)
+        }
 
         val leftAxis = lineChart.axisLeft
-        leftAxis.removeAllLimitLines()
-        leftAxis.setDrawZeroLine(true)
-        leftAxis.axisMaximum = yAxisMax
-        leftAxis.axisMinimum = yAxisMin
+        with(leftAxis) {
+            removeAllLimitLines()
+            setDrawZeroLine(true)
+            axisMaximum = yAxisMax
+            axisMinimum = yAxisMin
+        }
         lineChart.axisRight.isEnabled = false
-
     }
 
-    fun initGraph(values: FloatArray?, label: String, color: Int) {
+    fun initGraph(values: FloatArray?, label: String, mColor: Int) {
         val valuesArray: ArrayList<Entry> = ArrayList()
 
         if (values != null) {
@@ -58,15 +61,16 @@ class ChartLayoutLineChart(var lineChart: LineChart) {
         }
 
         val lineDataSet = LineDataSet(valuesArray, label)
-        lineDataSet.color = color
-        lineDataSet.setDrawCircles(false)
-        lineDataSet.lineWidth = 8f
-        lineDataSet.valueTextColor = color
-        lineDataSet.valueTextSize = 10.0f
-        lineDataSet.setDrawValues(false)
 
-        lineDataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
-
+        with(lineDataSet){
+            color = mColor
+            setDrawCircles(false)
+            lineWidth = 8f
+            valueTextColor = mColor
+            valueTextSize = 10.0f
+            setDrawValues(false)
+            mode = LineDataSet.Mode.CUBIC_BEZIER
+        }
 
         val data = LineData(lineDataSet)
 
