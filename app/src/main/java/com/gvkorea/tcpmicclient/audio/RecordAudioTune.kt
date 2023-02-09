@@ -57,30 +57,70 @@ class RecordAudioTune(
     private var count = 0
 
     val frequencyRangeList8K = listOf(
-        FrequencyRange8K.INDEX_20HZ, FrequencyRange8K.INDEX_25HZ, FrequencyRange8K.INDEX_32HZ,
-        FrequencyRange8K.INDEX_40HZ, FrequencyRange8K.INDEX_50HZ, FrequencyRange8K.INDEX_63HZ,
-        FrequencyRange8K.INDEX_80HZ, FrequencyRange8K.INDEX_100HZ, FrequencyRange8K.INDEX_125HZ,
-        FrequencyRange8K.INDEX_160HZ, FrequencyRange8K.INDEX_200HZ, FrequencyRange8K.INDEX_250HZ,
-        FrequencyRange8K.INDEX_315HZ, FrequencyRange8K.INDEX_400HZ, FrequencyRange8K.INDEX_500HZ,
-        FrequencyRange8K.INDEX_630HZ, FrequencyRange8K.INDEX_800HZ, FrequencyRange8K.INDEX_1000HZ,
-        FrequencyRange8K.INDEX_1250HZ, FrequencyRange8K.INDEX_1600HZ, FrequencyRange8K.INDEX_2000HZ,
-        FrequencyRange8K.INDEX_2500HZ, FrequencyRange8K.INDEX_3150HZ, FrequencyRange8K.INDEX_4000HZ,
-        FrequencyRange8K.INDEX_5000HZ, FrequencyRange8K.INDEX_6300HZ, FrequencyRange8K.INDEX_8000HZ,
-        FrequencyRange8K.INDEX_10000HZ, FrequencyRange8K.INDEX_12500HZ, FrequencyRange8K.INDEX_16000HZ,
+        FrequencyRange8K.INDEX_20HZ,
+        FrequencyRange8K.INDEX_25HZ,
+        FrequencyRange8K.INDEX_32HZ,
+        FrequencyRange8K.INDEX_40HZ,
+        FrequencyRange8K.INDEX_50HZ,
+        FrequencyRange8K.INDEX_63HZ,
+        FrequencyRange8K.INDEX_80HZ,
+        FrequencyRange8K.INDEX_100HZ,
+        FrequencyRange8K.INDEX_125HZ,
+        FrequencyRange8K.INDEX_160HZ,
+        FrequencyRange8K.INDEX_200HZ,
+        FrequencyRange8K.INDEX_250HZ,
+        FrequencyRange8K.INDEX_315HZ,
+        FrequencyRange8K.INDEX_400HZ,
+        FrequencyRange8K.INDEX_500HZ,
+        FrequencyRange8K.INDEX_630HZ,
+        FrequencyRange8K.INDEX_800HZ,
+        FrequencyRange8K.INDEX_1000HZ,
+        FrequencyRange8K.INDEX_1250HZ,
+        FrequencyRange8K.INDEX_1600HZ,
+        FrequencyRange8K.INDEX_2000HZ,
+        FrequencyRange8K.INDEX_2500HZ,
+        FrequencyRange8K.INDEX_3150HZ,
+        FrequencyRange8K.INDEX_4000HZ,
+        FrequencyRange8K.INDEX_5000HZ,
+        FrequencyRange8K.INDEX_6300HZ,
+        FrequencyRange8K.INDEX_8000HZ,
+        FrequencyRange8K.INDEX_10000HZ,
+        FrequencyRange8K.INDEX_12500HZ,
+        FrequencyRange8K.INDEX_16000HZ,
         FrequencyRange8K.INDEX_20000HZ
     )
 
     val frequencyRangeList16K = listOf(
-        FrequencyRange16K.INDEX_20HZ, FrequencyRange16K.INDEX_25HZ, FrequencyRange16K.INDEX_32HZ,
-        FrequencyRange16K.INDEX_40HZ, FrequencyRange16K.INDEX_50HZ, FrequencyRange16K.INDEX_63HZ,
-        FrequencyRange16K.INDEX_80HZ, FrequencyRange16K.INDEX_100HZ, FrequencyRange16K.INDEX_125HZ,
-        FrequencyRange16K.INDEX_160HZ, FrequencyRange16K.INDEX_200HZ, FrequencyRange16K.INDEX_250HZ,
-        FrequencyRange16K.INDEX_315HZ, FrequencyRange16K.INDEX_400HZ, FrequencyRange16K.INDEX_500HZ,
-        FrequencyRange16K.INDEX_630HZ, FrequencyRange16K.INDEX_800HZ, FrequencyRange16K.INDEX_1000HZ,
-        FrequencyRange16K.INDEX_1250HZ, FrequencyRange16K.INDEX_1600HZ, FrequencyRange16K.INDEX_2000HZ,
-        FrequencyRange16K.INDEX_2500HZ, FrequencyRange16K.INDEX_3150HZ, FrequencyRange16K.INDEX_4000HZ,
-        FrequencyRange16K.INDEX_5000HZ, FrequencyRange16K.INDEX_6300HZ, FrequencyRange16K.INDEX_8000HZ,
-        FrequencyRange16K.INDEX_10000HZ, FrequencyRange16K.INDEX_12500HZ, FrequencyRange16K.INDEX_16000HZ,
+        FrequencyRange16K.INDEX_20HZ,
+        FrequencyRange16K.INDEX_25HZ,
+        FrequencyRange16K.INDEX_32HZ,
+        FrequencyRange16K.INDEX_40HZ,
+        FrequencyRange16K.INDEX_50HZ,
+        FrequencyRange16K.INDEX_63HZ,
+        FrequencyRange16K.INDEX_80HZ,
+        FrequencyRange16K.INDEX_100HZ,
+        FrequencyRange16K.INDEX_125HZ,
+        FrequencyRange16K.INDEX_160HZ,
+        FrequencyRange16K.INDEX_200HZ,
+        FrequencyRange16K.INDEX_250HZ,
+        FrequencyRange16K.INDEX_315HZ,
+        FrequencyRange16K.INDEX_400HZ,
+        FrequencyRange16K.INDEX_500HZ,
+        FrequencyRange16K.INDEX_630HZ,
+        FrequencyRange16K.INDEX_800HZ,
+        FrequencyRange16K.INDEX_1000HZ,
+        FrequencyRange16K.INDEX_1250HZ,
+        FrequencyRange16K.INDEX_1600HZ,
+        FrequencyRange16K.INDEX_2000HZ,
+        FrequencyRange16K.INDEX_2500HZ,
+        FrequencyRange16K.INDEX_3150HZ,
+        FrequencyRange16K.INDEX_4000HZ,
+        FrequencyRange16K.INDEX_5000HZ,
+        FrequencyRange16K.INDEX_6300HZ,
+        FrequencyRange16K.INDEX_8000HZ,
+        FrequencyRange16K.INDEX_10000HZ,
+        FrequencyRange16K.INDEX_12500HZ,
+        FrequencyRange16K.INDEX_16000HZ,
         FrequencyRange16K.INDEX_20000HZ
     )
 
@@ -111,14 +151,20 @@ class RecordAudioTune(
             audioRecord.startRecording()
 
             while (isStarted) {
-                val bufferReadResult = audioRecord.read(buffer, 0, blockSize, AudioRecord.READ_BLOCKING)
-
+                val startTime = System.currentTimeMillis()
+                val bufferReadResult =
+                    audioRecord.read(buffer, 0, blockSize, AudioRecord.READ_BLOCKING)
+                val endTime = System.currentTimeMillis()
                 var i = 0
+
                 while (i < blockSize && i < bufferReadResult) {
                     toTransform[i] = buffer[i].toDouble() // / java.lang.Short.MAX_VALUE // 32,768
                     i++
                 }
+
                 transformer.ft(toTransform)
+
+                Log.d("transformer", "${endTime - startTime}")
                 publishProgress(toTransform)
             }
             audioRecord.stop()
@@ -300,7 +346,7 @@ class RecordAudioTune(
 
         return Math.pow(
             10.0,
-            Math.round((20.0 * Math.log10(abs(toTransform[i])) + 50.5 + CALIBRATION ) * 100.0) / 100.0 / 10
+            Math.round((20.0 * Math.log10(abs(toTransform[i])) + 50.5 + CALIBRATION) * 100.0) / 100.0 / 10
         ) // calib 수정
 //        return Math.pow(
 //            10.0,
