@@ -41,7 +41,7 @@ class RecordAudioTune(
     private val frequency = 44100
     private val channelConfiguration = AudioFormat.CHANNEL_IN_MONO
     private val audioEncoding = AudioFormat.ENCODING_PCM_FLOAT
-    private val blockSize = 8192
+    private val blockSize = 16384
     private val transformer = RealDoubleFFT(blockSize)
     private var chartValue = ArrayList<BarEntry>()
     private var barDataSet = BarDataSet(chartValue, null)
@@ -134,8 +134,8 @@ class RecordAudioTune(
         Log.d("count_progress", "$count")
         chartValue = ArrayList()
 
-        for (i in frequencyRangeList8K.indices) {
-            calculateFrequencyValues(values[0], frequencyRangeList8K[i])
+        for (i in frequencyRangeList16K.indices) {
+            calculateFrequencyValues(values[0], frequencyRangeList16K[i])
         }
 
         updateChart()
@@ -283,12 +283,12 @@ class RecordAudioTune(
     }
 
 
-    fun calculateFrequencyValues(toTransform: DoubleArray, frequencyRange: FrequencyRange8K) {
+    fun calculateFrequencyValues(toTransform: DoubleArray, frequencyRange: FrequencyRange16K) {
         val dbfsFinal = averageDbfs(toTransform, frequencyRange)
         rmsValues[frequencyRange.index] = dbfsFinal
     }
 
-    private fun averageDbfs(toTransform: DoubleArray, frequencyRange: FrequencyRange8K): Double {
+    private fun averageDbfs(toTransform: DoubleArray, frequencyRange: FrequencyRange16K): Double {
         var dbfs = 0.0
         for (j in frequencyRange.lowIndex..frequencyRange.highIndex) {
             dbfs += toTransformToDbfs(toTransform, j)
