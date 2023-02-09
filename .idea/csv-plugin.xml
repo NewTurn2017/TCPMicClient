@@ -31,6 +31,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/app/src/main/assets/calibration/isemic_725tr_calib_90degree_4292201.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/app/src/main/assets/calibration/isemic_725tr_calib_90degree_4292202.csv">
           <value>
             <Attribute>
